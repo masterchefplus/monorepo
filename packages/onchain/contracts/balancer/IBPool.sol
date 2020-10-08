@@ -43,4 +43,15 @@ interface IBPool {
     uint256 minAmountOut,
     uint256 maxPrice
   ) external returns (uint256 tokenAmountOut, uint256 spotPriceAfter);
+
+     function calcInGivenOut(
+        uint tokenBalanceIn,
+        uint tokenWeightIn,
+        uint tokenBalanceOut,
+        uint tokenWeightOut,
+        uint tokenAmountOut,
+        uint swapFee
+    )
+        external pure
+        returns (uint tokenAmountIn);
 }

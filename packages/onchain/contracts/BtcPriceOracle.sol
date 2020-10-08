@@ -5,14 +5,14 @@ pragma solidity 0.6.6;
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "@uniswap/lib/contracts/libraries/FixedPoint.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
+import "./Ownable.sol";
 import "./uniswap/UniswapV2OracleLibrary.sol";
 import "./uniswap/UniswapV2Library.sol";
 import "./IBtcPriceOracle.sol";
 
 // fixed window oracle that recomputes the average price for the entire period once every period
 // note that the price average is only guaranteed to be over at least 1 period, but may be over a longer period
-contract BtcPriceOracle is OwnableUpgradeSafe, IBtcPriceOracle {
+contract BtcPriceOracle is Ownable, IBtcPriceOracle {
   using FixedPoint for *;
 
   uint256 public constant PERIOD = 20 minutes;
@@ -35,7 +35,6 @@ contract BtcPriceOracle is OwnableUpgradeSafe, IBtcPriceOracle {
     address _weth,
     address[] memory tokenizedBtcs
   ) public {
-    __Ownable_init();
     factory = _factory;
     weth = _weth;
     for (uint256 i = 0; i < tokenizedBtcs.length; i++) {

@@ -77,7 +77,7 @@ contract BMath is BNum {
     // wO = tokenWeightOut                          ( 1 - sF )                                   //
     // sF = swapFee                                                                              //
     **********************************************************************************************/
-  function calcInGivenOut(
+  function calcInGivenOut2(
     uint256 tokenBalanceIn,
     uint256 tokenWeightIn,
     uint256 tokenBalanceOut,

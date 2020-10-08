@@ -398,6 +398,24 @@ contract BPool is ERC20UpgradeSafe, BMath, IBPool {
     return (tokenAmountOut, spotPriceAfter);
   }
 
+  function calcInGivenOut(
+    uint256 tokenBalanceIn,
+    uint256 tokenWeightIn,
+    uint256 tokenBalanceOut,
+    uint256 tokenWeightOut,
+    uint256 tokenAmountOut,
+    uint256 swapFee
+  ) external pure override returns (uint256 tokenAmountIn) {
+    return calcInGivenOut2(
+      tokenBalanceIn,
+      tokenWeightIn,
+      tokenBalanceOut,
+      tokenWeightOut,
+      tokenAmountOut,
+      swapFee
+    );
+  }
+
   function swapExactAmountOut(
     address tokenIn,
     uint256 maxAmountIn,
@@ -423,7 +441,7 @@ contract BPool is ERC20UpgradeSafe, BMath, IBPool {
     );
     require(spotPriceBefore <= maxPrice, "ERR_BAD_LIMIT_PRICE");
 
-    tokenAmountIn = calcInGivenOut(
+    tokenAmountIn = calcInGivenOut2(
       inRecord.balance,
       inRecord.denorm,
       outRecord.balance,
