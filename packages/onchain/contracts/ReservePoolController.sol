@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 
 pragma solidity 0.6.6;
+pragma experimental ABIEncoderV2;
 
 // Imports
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
-import "./Ownable.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "@uniswap/lib/contracts/libraries/Babylonian.sol";
 import "./uniswap/UniswapV2Library.sol";
@@ -17,8 +17,9 @@ import "./balancer/IConfigurableRightsPool.sol";
 import "./balancer/ICRPFactory.sol";
 import "./IBorrower.sol";
 import "./IFlashERC20.sol";
+import "./Ownable.sol";
 
-contract ReservePoolController is IBorrower, Ownable {
+contract ReservePoolController is Ownable, IBorrower {
   using SafeMath for uint256;
 
   uint256 internal constant DEFAULT_WEIGHT = 5 * 10**18;
@@ -55,7 +56,7 @@ contract ReservePoolController is IBorrower, Ownable {
     maxVbtcWeight = 3 * DEFAULT_WEIGHT;
   }
 
-  function initialize(
+  function deployPool(
     address _bPoolFactory,
     ICRPFactory _crpFactory,
     uint256 initialSwapFee
@@ -78,12 +79,10 @@ contract ReservePoolController is IBorrower, Ownable {
     uint256[] memory weights = new uint256[](2);
     weights[0] = DEFAULT_WEIGHT;
     weights[1] = DEFAULT_WEIGHT;
-    IConfigurableRightsPool.PoolParams memory poolParams = IConfigurableRightsPool.PoolParams({
-      poolTokenSymbol: // Balancer Pool Token (representing shares of the pool)
-      "vBTC++",
-      poolTokenName: "Strudel vBTC++",
-      constituentTokens: // Tokens inside the Pool
-      tokens,
+    IConfigurableRightsPool.PoolParams memory poolParams = IConfigurableRightsPool.PoolParams({ // Balancer Pool Token (representing shares of the pool)
+      poolTokenSymbol: "vBTC++",
+      poolTokenName: "Strudel vBTC++", // Tokens inside the Pool
+      constituentTokens: tokens,
       tokenBalances: balances,
       tokenWeights: weights,
       swapFee: initialSwapFee

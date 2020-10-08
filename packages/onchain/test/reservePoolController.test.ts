@@ -38,6 +38,7 @@ describe('ReservePoolController', async () => {
 
   let bFactory: MockBFactory;
   let bPool: BPool;
+  let crpFactory: CrpFactory;
   let factoryV2: IUniswapV2Factory;
   let router: UniswapV2Router01;
 
@@ -103,17 +104,15 @@ describe('ReservePoolController', async () => {
     // address _bPoolFactory,
     bFactory = await new MockBFactoryFactory(signers[0]).deploy();
 
+    // create CRPFactory
+
     // create the controller
-    const ReservePoolController = await ethers.getContractFactory('ReservePoolController');
-    const pendingController = await upgrades.deployProxy(ReservePoolController, [
+    controller = await new ReservePoolControllerFactory(signers[0]).deploy(
       vBtc.address,
       wEth.address,
-      bFactory.address,
       router.address,
-      oracle.address,
-    ]);
-    await pendingController.deployed();
-    controller = pendingController as ReservePoolController;
+      oracle.address
+    );
   });
 
   it('should deploy', async () => {
@@ -125,10 +124,11 @@ describe('ReservePoolController', async () => {
     await wEth.transfer(controller.address, wEthAmount.mul(10));
     await vBtc.transfer(controller.address, tBtcAmount.mul(10));
     const initialTradeFee = expandTo18Decimals(1).div(200); // 0.5%
-    await controller.deployPool(initialTradeFee);
+    await controller.deployPool(bFactory.address, crpFactory, initialTradeFee);
 
     // try initialize again
-    await expect(controller.deployPool(initialTradeFee)).to.be.reverted;
+    await expect(controller.deployPool(bFactory.address, crpFactory, initialTradeFee)).to.be
+      .reverted;
     // try some trade
     await expect(controller.resyncWeights()).to.be.reverted;
     // set pool for later
