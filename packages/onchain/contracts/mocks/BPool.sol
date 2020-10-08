@@ -405,15 +405,16 @@ contract BPool is ERC20UpgradeSafe, BMath, IBPool {
     uint256 tokenWeightOut,
     uint256 tokenAmountOut,
     uint256 swapFee
-  ) external pure override returns (uint256 tokenAmountIn) {
-    return calcInGivenOut2(
-      tokenBalanceIn,
-      tokenWeightIn,
-      tokenBalanceOut,
-      tokenWeightOut,
-      tokenAmountOut,
-      swapFee
-    );
+  ) external override pure returns (uint256 tokenAmountIn) {
+    return
+      calcInGivenOut2(
+        tokenBalanceIn,
+        tokenWeightIn,
+        tokenBalanceOut,
+        tokenWeightOut,
+        tokenAmountOut,
+        swapFee
+      );
   }
 
   function swapExactAmountOut(

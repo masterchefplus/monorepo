@@ -18,7 +18,6 @@ import "./balancer/ICRPFactory.sol";
 import "./IBorrower.sol";
 import "./IFlashERC20.sol";
 
-
 contract ReservePoolController is IBorrower, Ownable {
   using SafeMath for uint256;
 
@@ -43,7 +42,6 @@ contract ReservePoolController is IBorrower, Ownable {
   IConfigurableRightsPool private crp;
   uint32 private blockTimestampLast;
 
-
   constructor(
     address _vBtcAddr,
     address _wEthAddr,
@@ -61,9 +59,9 @@ contract ReservePoolController is IBorrower, Ownable {
     address _bPoolFactory,
     ICRPFactory _crpFactory,
     uint256 initialSwapFee
-  ) external  {
+  ) external {
     require(address(crp) == address(0), "already initialized");
-    
+
     uint256[] memory balances = new uint256[](2);
     // get price
     balances[1] = vBtc.balanceOf(address(this));
@@ -74,7 +72,6 @@ contract ReservePoolController is IBorrower, Ownable {
     balances[0] = IBtcPriceOracle(oracle).consult(balances[1]);
     require(wEthBal == balances[0], "missing initial WETH bal");
 
-
     address[] memory tokens = new address[](2);
     tokens[0] = address(wEth);
     tokens[1] = address(vBtc);
@@ -82,11 +79,11 @@ contract ReservePoolController is IBorrower, Ownable {
     weights[0] = DEFAULT_WEIGHT;
     weights[1] = DEFAULT_WEIGHT;
     IConfigurableRightsPool.PoolParams memory poolParams = IConfigurableRightsPool.PoolParams({
-      // Balancer Pool Token (representing shares of the pool)
-      poolTokenSymbol: "vBTC++",
+      poolTokenSymbol: // Balancer Pool Token (representing shares of the pool)
+      "vBTC++",
       poolTokenName: "Strudel vBTC++",
-      // Tokens inside the Pool
-      constituentTokens: tokens,
+      constituentTokens: // Tokens inside the Pool
+      tokens,
       tokenBalances: balances,
       tokenWeights: weights,
       swapFee: initialSwapFee
@@ -115,7 +112,6 @@ contract ReservePoolController is IBorrower, Ownable {
     wEth.approve(address(bPool), MAX_UINT);
     wEth.approve(address(uniRouter), MAX_UINT);
   }
-
 
   // computes the direction and magnitude of the profit-maximizing trade
   function computeProfitMaximizingTrade(
@@ -294,8 +290,7 @@ contract ReservePoolController is IBorrower, Ownable {
 
     // 6. repay loan
     // TODO: don't forget that we need to pay a flash loan fee
-  } 
-
+  }
 
   // governance function
   function setParams(
